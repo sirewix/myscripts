@@ -1,0 +1,18 @@
+#!/bin/sh
+
+#- Rebase branches quicker with `fzf`
+
+#* git fzf
+
+gitreb () {
+  git checkout $target
+  git pull
+  git checkout $current
+  git rebase $target
+  git status
+}
+
+target=$(git branch | fzf)
+current=$(git branch --show-current)
+[ "$target" = "$source" ] || [ -z "$target" ] || gitreb
+

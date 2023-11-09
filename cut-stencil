@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#- Script for cutting a picture into a grid to be printed on A4 (297x210mm) paper to be used for creating stencils for street art.
+#- For example, to prepare a `pic.png` image to be made into a stencil for a 3x2m wall:
+#- ```sh
+#- cut-stencil pic.png 3000x2000
+#- ```
+
+#* imagemagick
+
+img=$(basename $1)
+rm -rf $img-res
+mkdir -p $img-res
+
+convert $1 \
+  -resize $2 \
+  -edge 1 \
+  -negate \
+  -crop 297x210 \
+  -extent 297x210 \
+  $img-res/%02d.png

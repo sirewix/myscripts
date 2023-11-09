@@ -1,0 +1,25 @@
+#!/bin/sh
+
+#- Quickly create a PNG made with LaTeX. Useful for formulas.
+
+#* vim latex dvipng imagemagick
+
+unique=latexpng
+cd /tmp
+vim -c 'set filetype=tex' $unique.tex
+echo '
+\documentclass[border=2pt,varwidth=true]{standalone}
+\usepackage{standalone}
+\usepackage[T1,T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\begin{document}' > ${unique}_d.tex
+cat $unique.tex >> ${unique}_d.tex
+echo '\end{document}' >> ${unique}_d.tex
+cat ${unique}_d.tex
+
+latex ${unique}_d
+dvipng -T tight -D 150 -o $unique.png ${unique}_d
+convert $unique.png -gravity center -extent 500 LATEX.png
+

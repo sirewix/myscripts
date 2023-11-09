@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#- Shortcut for inserting data from clipboard:
+#- ```sh
+#- somecmd $(clipb)
+#- somecmd `clipb`
+#- ```
+
+#* xclip
+
+xclip -selection clipboard -o

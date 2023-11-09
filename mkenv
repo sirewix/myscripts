@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#- Take a snapshot of current environment, removing non-variables
+#- ```sh
+#- mkenv .envrc
+#- source .envrc
+#- ```
+
+#* grep sed
+
+env | grep '^[^ =]*=.*$' | sed '/^LC_.*$/d' > "${1-.env}"

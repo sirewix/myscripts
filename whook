@@ -1,0 +1,31 @@
+#!/bin/sh
+
+#- Use a hook file to rerun a command. Useful to trigger recompilation
+#- ```sh
+#- whook .hook
+#- ```
+#-
+#- Example of the vim binding triggering a hook
+#- ```vim
+#- :nnoremap <F12> :call system('touch .hook')<cr>
+#- ```
+
+#* inotifywait unbuffer less
+
+hook=${1-.hook}; shift
+
+echo "Watching hook file: $hook"
+
+pid=
+
+inotifywait -e close_write,moved_to,create -m $(dirname $hook) |
+while read -r directory events filename; do
+  if [ "$filename" = "$hook" ]; then
+    (kill -9 $pid > /dev/null 2>&1) || true
+    (unbuffer $@ | less -r) &
+    $@
+    pid=$!
+  fi
+done
+
+unbuffer $@ | less -r

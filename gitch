@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#- Switch branches with fzf
+#* git fzf sed
+
+branch=$((git branch -l | sed 's/^..//'; git branch -r | sed 's/^  origin\///') | sort | uniq | fzf)
+[ -z "$branch" ] || git checkout $branch

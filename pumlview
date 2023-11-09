@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#- Preview plantuml files with `feh`
+
+#* plantuml feh
+
+cat $1 | plantuml -p | feh -

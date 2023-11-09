@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#- Git diff as a tree of files
+#- ```sh
+#- difftree HEAD~
+#- ```
+
+#* git tree
+
+git diff --name-only ${1} | tree -C --fromfile .

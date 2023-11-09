@@ -1,0 +1,12 @@
+#!/bin/sh
+
+#- Run command in a pager without stdout and stderr mixing
+#- Useful for commands output of which exceeds terminal buffer
+#- or for terminals without scrolling, like `st`
+#- ```sh
+#- cless cargo build
+#- ```
+
+#* unbuffer less
+
+unbuffer $@ | less -r
