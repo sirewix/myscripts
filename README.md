@@ -82,7 +82,7 @@ Preview plantuml files with `feh`
 ## `whook`
 Use a hook file to rerun a command. Useful to trigger recompilation
 ```sh
-whook .hook
+whook .hook cargo build
 ```
 Example of the vim binding triggering a hook
 ```vim

@@ -2,7 +2,7 @@
 
 #- Use a hook file to rerun a command. Useful to trigger recompilation
 #- ```sh
-#- whook .hook
+#- whook .hook cargo build
 #- ```
 #-
 #- Example of the vim binding triggering a hook
@@ -12,7 +12,7 @@
 
 #* inotifywait unbuffer less
 
-hook=${1-.hook}; shift
+hook=${1-}; shift
 
 echo "Watching hook file: $hook"
 
