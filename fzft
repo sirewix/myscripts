@@ -1,0 +1,24 @@
+#!/bin/sh
+
+#- Run `fzf` in `st` terminal window
+#* fzf st
+
+prompt='> '
+args=
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -p|--prompt) prompt="$2"; shift; shift;;
+    *) args="$args $1"; shift;;
+  esac
+done
+
+buf=$(mktemp)
+res=$(mktemp)
+
+[ ! ${prompt:0-1} = ' ' ] && prompt="$prompt "
+
+cat > $buf
+st -c float -t "$prompt" sh -c "cat $buf | fzf --prompt \"$prompt\" $args > $res"
+cat $res
+rm $buf $res

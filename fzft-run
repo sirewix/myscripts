@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#- `dmenu_run` but with `fzft`
+#* fzft
+
+IFS=:
+stest -flx $PATH | fzft $@ | ${SHELL:-"/bin/sh"}

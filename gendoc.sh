@@ -12,9 +12,8 @@ echo 'Some random useful scripts I wrote over the years'
 for cmd in *; do
   [ -x "$cmd" ] || continue
   echo
-  echo "## \`$cmd\`"
+  echo "## [\`$cmd\`](./$cmd)"
   cat $cmd | grep '^#- ' | cut -c 4-
-  # deps=$(cat $cmd | grep '^#\* ' | cut -c 4-)
   deps=$(cat $cmd | grep '^#\* ' | cut -c 4- | tr ' ' '\n' | sort)
   if [ -n "$deps" ]; then
     echo
