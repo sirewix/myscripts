@@ -1,0 +1,56 @@
+#!/bin/sh
+
+#- Constructs github permalinks given filename and line number or range of lines.
+#- Formats them as `[src/file.js:3](...)` markdown link and inserts into clipboard
+#- Must be run in git repo root dir:
+#- ```sh
+#- gen-gh-permalink src/file.js 3 4
+#- ```
+#-
+#- Useful vim bindings:
+#- ```vim
+#- nnoremap gH :execute '!' . 'gen-gh-permalink ' . shellescape(expand('%')) . ' ' . line(".")<cr>
+#- vnoremap gH <esc>:execute '!' . 'gen-gh-permalink ' . shellescape(expand('%')) . ' ' . getpos("'<")[1] . ' ' . getpos("'>")[1]<cr>
+#- ```
+#-
+#* xclip git sed grep
+
+fname="$1"
+l1=$2
+l2=$3
+
+if [ $l1 = "$l2" ]; then
+  l2=''
+fi
+
+if [ ! -z "$(git diff --name-only "$fname")" ]; then
+  echo "File $fname contains changes. Stash them and try again"
+  exit 1
+fi
+
+origin=$(git remote get-url origin)
+
+if [ -z $(echo "$origin" | grep 'github.com') ]; then
+  echo "Not implemented: origin is not github"
+  exit 1
+fi
+
+repo=$(echo $origin | sed 's/^\(git@github.com:\|https:\/\/github.com\/\)\([a-zA-Z_-]\+\)\/\([a-zA-Z_-]\+\)\.git$/\2\/\3/')
+
+if [ "$origin" = "$repo" ]; then
+  echo "Invalid origin"
+  exit 1
+fi
+
+commit=$(git rev-parse HEAD)
+if [ -z "$l2" ]; then
+  l2mb=''
+else
+  l2mb="-L$l2"
+fi
+
+link="https://github.com/$repo/blob/$commit/$fname#L${l1}${l2mb}"
+
+path="$fname:$l1"
+
+echo "[$path]($link)" | xclip -i -selection clipboard

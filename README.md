@@ -55,6 +55,21 @@ Script for generating the README.md for this repo:
 
 **Dependencies:** `grep`, `sed`
 
+## [`gen-gh-permalink`](./gen-gh-permalink)
+Constructs github permalinks given filename and line number or range of lines.
+Formats them as `[src/file.js:3](...)` markdown link and inserts into clipboard
+Must be run in git repo root dir:
+```sh
+gen-gh-permalink src/file.js 3 4
+```
+Useful vim bindings:
+```vim
+nnoremap gH :execute '!' . 'gen-gh-permalink ' . shellescape(expand('%')) . ' ' . line(".")<cr>
+vnoremap gH <esc>:execute '!' . 'gen-gh-permalink ' . shellescape(expand('%')) . ' ' . getpos("'<")[1] . ' ' . getpos("'>")[1]<cr>
+```
+
+**Dependencies:** `git`, `grep`, `sed`, `xclip`
+
 ## [`gitch`](./gitch)
 Switch branches with fzf
 
