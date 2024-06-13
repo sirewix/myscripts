@@ -61,6 +61,7 @@ Formats them as `[src/file.js:3](...)` markdown link and inserts into clipboard
 ```sh
 gen-gh-permalink src/file.js 3 4
 ```
+
 You can use `-s`/`--snippet` parameter and pipe a piece of code into this script to get
 ````markdown
 [src/file.js:3](...):
@@ -69,13 +70,15 @@ const a = 3;
 ...
 ```
 ````
--style snippet
+-style snippet.
+
 Useful vim bindings:
 ```vim
 nnoremap gH :execute '!' . 'gen-gh-permalink ' . shellescape(expand('%')) . ' ' . line(".")<cr>
 vnoremap gH <esc>:execute '!' . 'gen-gh-permalink ' . shellescape(expand('%')) . ' ' . getpos("'<")[1] . ' ' . getpos("'>")[1]<cr>
 vnoremap gHH <esc>:execute "'<,'>w !" . 'gen-gh-permalink -s ' . shellescape(expand('%')) . ' ' . getpos("'<")[1] . ' ' . getpos("'>")[1]<cr>
 ```
+
 
 **Dependencies:** `git`, `grep`, `sed`, `xclip`
 
@@ -118,6 +121,7 @@ Use a hook file to rerun a command. Useful to trigger recompilation
 ```sh
 whook .hook cargo build
 ```
+
 Example of the vim binding triggering a hook
 ```vim
 :nnoremap <F12> :call system('touch .hook')<cr>

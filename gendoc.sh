@@ -13,7 +13,7 @@ for cmd in *; do
   [ -x "$cmd" ] || continue
   echo
   echo "## [\`$cmd\`](./$cmd)"
-  cat $cmd | grep '^#- ' | cut -c 4-
+  cat $cmd | grep '^#-' | cut -c 4-
   deps=$(cat $cmd | grep '^#\* ' | cut -c 4- | tr ' ' '\n' | sort)
   if [ -n "$deps" ]; then
     echo
