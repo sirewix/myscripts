@@ -2,28 +2,50 @@
 
 #- Constructs github permalinks given filename and line number or range of lines.
 #- Formats them as `[src/file.js:3](...)` markdown link and inserts into clipboard
-#- Must be run in git repo root dir:
 #- ```sh
 #- gen-gh-permalink src/file.js 3 4
 #- ```
+#-
+#- You can use `-s`/`--snippet` parameter and pipe a piece of code into this script to get
+#- ````markdown
+#- [src/file.js:3](...):
+#- ```js
+#- const a = 3;
+#- ...
+#- ```
+#- ````
+#- -style snippet
 #-
 #- Useful vim bindings:
 #- ```vim
 #- nnoremap gH :execute '!' . 'gen-gh-permalink ' . shellescape(expand('%')) . ' ' . line(".")<cr>
 #- vnoremap gH <esc>:execute '!' . 'gen-gh-permalink ' . shellescape(expand('%')) . ' ' . getpos("'<")[1] . ' ' . getpos("'>")[1]<cr>
+#- vnoremap gHH <esc>:execute "'<,'>w !" . 'gen-gh-permalink -s ' . shellescape(expand('%')) . ' ' . getpos("'<")[1] . ' ' . getpos("'>")[1]<cr>
 #- ```
 #-
 #* xclip git sed grep
+
+if [ "$1" = '-s' ] || [ "$1" = '--snippet' ]; then
+  snippet=true
+  shift
+fi
 
 fname="$1"
 l1=$2
 l2=$3
 
+abs_fname="$PWD/$fname"
+
+cd "$(dirname "$fname")"
+# git rev-parse --git-dir || return 0
+gitdir=$(git rev-parse --show-toplevel) && [ ! -z $? ] || exit 1
+rel_fname="${abs_fname#"$gitdir/"}"
+
 if [ $l1 = "$l2" ]; then
   l2=''
 fi
 
-if [ ! -z "$(git diff --name-only "$fname")" ]; then
+if [ ! -z "$(git diff --name-only "$abs_fname")" ]; then
   echo "File $fname contains changes. Stash them and try again"
   exit 1
 fi
@@ -49,8 +71,16 @@ else
   l2mb="-L$l2"
 fi
 
-link="https://github.com/$repo/blob/$commit/$fname#L${l1}${l2mb}"
+link="https://github.com/$repo/blob/$commit/$rel_fname#L${l1}${l2mb}"
 
-path="$fname:$l1"
+path="$rel_fname:$l1"
 
-echo "[$path]($link)" | xclip -i -selection clipboard
+(
+  echo -n "[$path]($link)"
+  if [ ! -z "$snippet" ]; then
+    echo ':'
+    echo '```'"${abs_fname##*.}"
+    cat
+    echo '```'
+  fi
+) | xclip -i -selection clipboard
